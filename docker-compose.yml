@@ -1,0 +1,40 @@
+version: "3.9"
+   
+services:
+  db:
+    image: 'postgres:12-alpine'
+    volumes:
+      - ./data/db:/var/lib/postgresql/data
+
+  web:
+    build: .
+    command: ["./entrypoint.sh"]
+    volumes:
+      - .:/usr/src/app/
+    ports:
+      - "8000:8000"
+    environment:
+      - POSTGRES_NAME=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - CELERY_BROKER=redis://redis:6379/0
+      - CELERY_BACKEND=redis://redis:6379/0
+      - C_FORCE_ROOT=1
+    depends_on:
+      - db
+
+  celery:
+      build: .
+      command: celery -A text_extraction worker --pool=solo -l info
+      volumes:
+          - .:/usr/src/app/
+      environment:
+          - CELERY_BROKER=redis://redis:6379/0
+          - CELERY_BACKEND=redis://redis:6379/0
+
+      depends_on:
+          - web
+          - redis
+
+  redis:
+    image: redis:alpine

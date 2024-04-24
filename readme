@@ -1,0 +1,17 @@
+# Build Container 
+# !docker build . --no-cache
+
+# Start container service
+# !docker compose up
+
+# Make Migrations
+# !docker compose run web python manage.py makemigrations
+
+# Migrate db changes
+# !docker compose run web python manage.py migrate
+
+# API Endpoints
+# 1. Get Extraction : POST http://localhost:8000/extract
+# 2. User signup : POST http://localhost:8000/users/signup/
+# 3. User signin(get token) : POST http://localhost:8000/users/signin/
+# 4. GET File upload and extracted : GET http://localhost:8000/extracted_text
